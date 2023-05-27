@@ -99,31 +99,32 @@ from itertools import product
 from string import Template
 
 class MMAType:
-  def __init__(self, ptx_type):
-    self.ptx_type = ptx_type
-    self.llvm_type = {
-        "f16"  : "<2 x half>",
-        "f32"  : "float",
-        "f64"  : "double",
-        "s32"  : "i32",
-        "b16"  : "i32",
-        "s8"   : "i32",
-        "u8"   : "i32",
-        "s4"   : "i32",
-        "u4"   : "i32",
-        "b1"   : "i32",
-        "bf16" : "i32",
-        "tf32" : "i32",
-    }[ptx_type];
+    def __init__(self, ptx_type):
+        self.ptx_type = ptx_type
+        self.llvm_type = {
+            "f16": "<2 x half>",
+            "f32": "float",
+            "f64": "double",
+            "s32": "i32",
+            "b16": "i32",
+            "s8": "i32",
+            "u8": "i32",
+            "s4": "i32",
+            "u4": "i32",
+            "b1": "i32",
+            "bf16": "i32",
+            "tf32": "i32",
+        }[ptx_type]
 
-    self.ptx_reg_pattern = {
-        "f16" : "%hh[0-9]+",
-        "f32" : "%f[0-9]+",
-        "f64" : "%fd[0-9]+",
-    }.get(ptx_type, "%r[0-9]+")
+        self.ptx_reg_pattern = {
+            "f16": "%r[0-9]+",
+            "f32": "%f[0-9]+",
+            "f64": "%fd[0-9]+",
+        }.get(ptx_type, "%r[0-9]+")
 
-  def __repr__(self):
-    return "%s/%s" % (self.ptx_type, self.llvm_type)
+    def __repr__(self):
+        return "%s/%s" % (self.ptx_type, self.llvm_type)
+
 
 class MMAFrag:
   def __init__(self, geom, frag, ptx_elt_type):
