@@ -156,6 +156,7 @@ def hasPTX65 : Predicate<"Subtarget->getPTXVersion() >= 65">;
 def hasPTX70 : Predicate<"Subtarget->getPTXVersion() >= 70">;
 def hasPTX71 : Predicate<"Subtarget->getPTXVersion() >= 71">;
 def hasPTX72 : Predicate<"Subtarget->getPTXVersion() >= 72">;
+def hasPTX80 : Predicate<"Subtarget->getPTXVersion() >= 80">;
 
 def hasSM30 : Predicate<"Subtarget->getSmVersion() >= 30">;
 def hasSM32 : Predicate<"Subtarget->getSmVersion() >= 32">;
@@ -165,6 +166,7 @@ def hasSM72 : Predicate<"Subtarget->getSmVersion() >= 72">;
 def hasSM75 : Predicate<"Subtarget->getSmVersion() >= 75">;
 def hasSM80 : Predicate<"Subtarget->getSmVersion() >= 80">;
 def hasSM86 : Predicate<"Subtarget->getSmVersion() >= 86">;
+def hasSM90 : Predicate<"Subtarget->getSmVersion() >= 90">;
 
 // non-sync shfl instructions are not available on sm_70+ in PTX6.4+
 def hasSHFL : Predicate<"!(Subtarget->getSmVersion() >= 70"
@@ -234,7 +236,7 @@ class I16x2<string OpcStr, SDNode OpNode> :
  NVPTXInst<(outs Int32Regs:$dst), (ins Int32Regs:$a, Int32Regs:$b),
               !strconcat(OpcStr, "16x2 \t$dst, $a, $b;"),
               [(set Int32Regs:$dst, (OpNode (v2i16 Int32Regs:$a), (v2i16 Int32Regs:$b)))]>,
-              Requires<[hasPTX<80>, hasSM<90>]>;
+              Requires<[hasPTX80, hasSM90]>;
 
 // Template for instructions which take 3 int args.  The instructions are
 // named "<OpcStr>.s32" (e.g. "addc.cc.s32").
@@ -1059,7 +1061,7 @@ class FNEG_F16_F16X2<string OpcStr, ValueType T, RegisterClass RC, Predicate Pre
       NVPTXInst<(outs RC:$dst), (ins RC:$src),
                 !strconcat(OpcStr, " \t$dst, $src;"),
                 [(set RC:$dst, (fneg (T RC:$src)))]>,
-                Requires<[useFP16Math, hasPTX<60>, hasSM<53>, Pred]>;
+                Requires<[useFP16Math, hasPTX60, hasSM53, Pred]>;
 def FNEG16_ftz   : FNEG_F16_F16X2<"neg.ftz.f16", f16, Int16Regs, doF32FTZ>;
 def FNEG16       : FNEG_F16_F16X2<"neg.f16", f16, Int16Regs, True>;
 def FNEG16x2_ftz : FNEG_F16_F16X2<"neg.ftz.f16x2", v2f16, Int32Regs, doF32FTZ>;
@@ -2462,7 +2464,7 @@ def MoveParamSymbolI32 : MoveParamSymbolInst<Int32Regs, i32imm, i32, ".b32">;
 
 def MoveParamI16 :
   NVPTXInst<(outs Int16Regs:$dst), (ins Int16Regs:$src),
-            "cvt.u16.u32 \t$dst, $src;", // ??? Why cvt.u16.u32 ? 
+            "cvt.u16.u32 \t$dst, $src;", // ??? Why cvt.u16.u32 ?
             [(set i16:$dst, (MoveParam i16:$src))]>;
 def MoveParamF64 : MoveParamInst<f64, Float64Regs, ".f64">;
 def MoveParamF32 : MoveParamInst<f32, Float32Regs, ".f32">;
